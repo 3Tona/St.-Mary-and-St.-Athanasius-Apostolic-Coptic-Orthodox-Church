@@ -255,8 +255,8 @@
     </div>
 
     <script>
-        // ضع هنا رابط السيرفر النهائي الذي حصلت عليه من Vercel أو Render دون إضافة /api في آخره
-        const SERVER_URL = 'https://your-project-name.vercel.app'; 
+        // تم تحديث الرابط هنا تلقائياً ليرتبط بسيرفر Vercel الأونلاين الخاص بك مباشرة
+        const SERVER_URL = 'https://st-mary-and-st-athanasius-apostolic.vercel.app'; 
 
         let currentUser = null;
 
@@ -369,11 +369,11 @@
         }
 
         function switchTab(tabId) {
-            document.querySelectorAll('.container').forEach(c => c.add('hidden'));
+            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             
             document.getElementById(tabId).classList.remove('hidden');
-            event.target.classList.add('active');
+            if(event && event.target) event.target.classList.add('active');
 
             if (tabId === 'bookingTab') loadUserData();
             if (tabId === 'adminTab') loadAdminData();
@@ -395,19 +395,18 @@
             const res = await fetch(`${SERVER_URL}/api/priests`, { method: 'POST' });
             const priests = await res.json();
 
-            // تحديث قوائم الاختيار (Select filters)
             const filter = document.getElementById('priestFilter');
             const adminSelect = document.getElementById('adminPriestSelect');
             
-            filter.innerHTML = '<option value="all">كل الآباء الكهنة</option>';
-            adminSelect.innerHTML = '';
+            if(filter) filter.innerHTML = '<option value="all">كل الآباء الكهنة</option>';
+            if(adminSelect) adminSelect.innerHTML = '';
 
             const listContainer = document.getElementById('adminPriestsList');
             if(listContainer) listContainer.innerHTML = '';
 
             priests.forEach(p => {
-                filter.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-                adminSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                if(filter) filter.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+                if(adminSelect) adminSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
                 
                 if(listContainer) {
                     listContainer.innerHTML += `
@@ -489,7 +488,7 @@
                 body: JSON.stringify({ appointmentId, userId: currentUser.id })
             });
             const data = await res.json();
-            alert(data.message); // هنا ستظهر رسالة الرفض إذا كان لديه حجز آخر أو تجاوز الـ 40 يوم
+            alert(data.message); 
             loadUserData();
         }
 
@@ -555,7 +554,7 @@
             container.innerHTML = '';
 
             users.forEach(u => {
-                if(u.role === 'admin') return; // عدم عرض حساب الأدمن نفسه للتعديل
+                if(u.role === 'admin') return; 
 
                 const isBanned = u.banUntil && new Date(u.banUntil) > new Date();
                 const banBtn = isBanned ? 
